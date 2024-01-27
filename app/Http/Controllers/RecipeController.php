@@ -22,7 +22,7 @@ class RecipeController extends Controller
 
     public function show($filename)
     {
-        $recipe = $this->recipeService->parseRecipe("recipes/{$filename}.md");
+        $recipe = $this->recipeService->parseRecipe("{$filename}.md");
 
         // Assuming you have a view named 'recipe.show'
         return view('recipes.show', [

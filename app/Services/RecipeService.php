@@ -4,10 +4,8 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use League\CommonMark\MarkdownConverter;
-use League\CommonMark\Node\Block\Paragraph;
-use League\CommonMark\Extension\Table\Table;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
@@ -55,9 +53,16 @@ class RecipeService
         $this->converter = new MarkdownConverter($environment);
     }
 
-    public function parseRecipe($filePath)
+    public function parseRecipe($filename)
     {
-        $markdown = Storage::get($filePath);
+        $markdownPath = resource_path('markdown/recipes/' . $filename);
+
+        if (!File::exists($markdownPath)) {
+            // Handle the case where the file doesn't exist
+            return null;
+        }
+
+        $markdown = File::get($markdownPath);
         $result = $this->converter->convert($markdown);
 
         if ($result instanceof RenderedContentWithFrontMatter) {
@@ -89,12 +94,15 @@ class RecipeService
 
     public function listRecipes()
     {
+        $directory = resource_path('markdown/recipes');
+        $recipeFiles = File::files($directory);
+    
         $recipes = [];
-        $files = Storage::files('recipes'); // Adjust the path to where your recipes are stored
 
-        foreach ($files as $file) {
-            if (Str::endsWith($file, '.md')) {
-                $recipeData = $this->parseRecipe($file);
+        foreach ($recipeFiles as $file) {
+            if (Str::endsWith($file->getFilename(), '.md')) {
+                $filename = $file->getFilename(); // Get the full file path
+                $recipeData = $this->parseRecipe($filename);
                 $metadata = $recipeData['metadata'] ?? [];
                 $metadata['slug'] = Str::slug($metadata['title']); // Create a slug for URL
                 $recipes[] = $metadata;
