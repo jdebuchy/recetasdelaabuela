@@ -5,6 +5,7 @@ date: 2024-01-27
 video: https://www.youtube.com/watch?v=kjipKpITZw0
 image: recipe-images/bunuelos-de-acelga.jpeg
 porciones: 4
+category: Acompañamiento 
 ---
 
 ## Preparación

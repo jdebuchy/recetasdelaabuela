@@ -5,6 +5,7 @@ date: 2024-01-26
 video: https://www.youtube.com/watch?v=pvlkYYdIBV0 
 image: recipe-images/tortilla-de-papas.jpg
 porciones: 4
+category: Plato Principal
 ---
 
 ## Ingredientes
