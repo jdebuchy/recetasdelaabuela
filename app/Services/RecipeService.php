@@ -89,12 +89,9 @@ class RecipeService
             $metadata['video_embed'] = $this->getOEmbedHtml($metadata['video']);
         }
 
-        $imageFolderPath = $metadata['images'] ?? null;
-
         return [
             'metadata' => $metadata,
             'content' => $htmlContent,
-            'images' => $imageFolderPath,
         ];
     }
 
