@@ -53,6 +53,12 @@ class RecipeService
         $this->converter = new MarkdownConverter($environment);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $filename
+     * @return void
+     */
     public function parseRecipe($filename)
     {
         $markdownPath = resource_path('markdown/recipes/' . $filename);
@@ -92,6 +98,11 @@ class RecipeService
         ];
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function listRecipes()
     {
         $directory = resource_path('markdown/recipes');
@@ -101,10 +112,10 @@ class RecipeService
 
         foreach ($recipeFiles as $file) {
             if (Str::endsWith($file->getFilename(), '.md')) {
-                $filename = $file->getFilename(); // Get the full file path
+                $filename = $file->getFilename();
                 $recipeData = $this->parseRecipe($filename);
                 $metadata = $recipeData['metadata'] ?? [];
-                $metadata['slug'] = Str::slug($metadata['title']); // Create a slug for URL
+                $metadata['slug'] = Str::slug($metadata['title']);
                 $recipes[] = $metadata;
             }
         }
@@ -114,9 +125,6 @@ class RecipeService
 
     protected function getOEmbedHtml($url) 
     {
-        // Use an oEmbed library or make an API request to get the embed HTML
-        // This is a simplified example using file_get_contents and the oembed API for YouTube
-        // It's better to use a HTTP client like Guzzle in a real application
         $oembedEndpoint = 'https://www.youtube.com/oembed?url=' . urlencode($url) . '&format=json';
         try {
             $json = file_get_contents($oembedEndpoint);
@@ -131,5 +139,40 @@ class RecipeService
             // Handle exceptions, such as network errors
             return '';
         }
+    }
+
+    public function groupRecipesByCategory()
+    {
+        $recipes = $this->listRecipes(); // Get all recipes
+        $categories = $this->getCategories();
+
+        $groupedRecipes = [];
+
+        foreach ($categories as $category => $slug) {
+            $groupedRecipes[$slug] = collect($recipes)->where('category', $category)->all();
+        }
+
+        return $groupedRecipes;
+    }
+
+    public function getCategories()
+    {
+        // Replace this with your actual logic to get categories from recipes or another source.
+        $categories = ['Plato Principal', 'Acompañamiento', 'Postre', 'Ensalada', 'Tartas'];
+        $slugs = [];
+
+        foreach ($categories as $category) {
+            $slugs[$category] = Str::slug($category);
+        }
+
+        return $slugs;
+    }
+
+    public function getCategoryNameBySlug($slug)
+    {
+        $categories = $this->getCategories();
+        $categoryName = array_search($slug, $categories);
+
+        return $categoryName !== false ? $categoryName : null;
     }
 }

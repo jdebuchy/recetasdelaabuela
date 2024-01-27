@@ -14,9 +14,7 @@ use App\Http\Controllers\RecipeController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', [RecipeController::class, 'index']);
-Route::get('/recetas/{filename}', [RecipeController::class, 'show']);
+Route::get('/recetas/{slug}', [RecipeController::class, 'show'])->name('recipes.show');
+Route::get('/categories', [RecipeController::class, 'categoryIndex'])->name('categories.index');
+Route::get('/categories/{slug}', [RecipeController::class, 'showCategory'])->name('categories.show');
